@@ -1,14 +1,7 @@
 #!/bin/bash
 
-
-if [ $# -ne 3 ]
-then
-	echo "Usage: ./$0 service schedule"
-	exit
-else
-	SERVICE=$1	
-	SCHEDULE=$2
-fi
+SERVICE=$1	
+SCHEDULE=$2
 
 while read -u10 line 
 do
@@ -16,17 +9,10 @@ do
     then
         continue
     fi
-    DEST=${line%% *} 
-	WORKSHOP_DIR=${line##* }
-	if [ ! -d $WORKSHOP_DIR ]
-	then
-		./install.expect ${line}
-	else
-    	echo "Synchronize "$DEST"..."
-		./sync.expect $line
-	fi	
+    echo "Synchronize "$DEST"..."
+	./sync.expect $line "TFWorkshop"
 done 10< nodes
 
-cd ../servers
-echo "Deploying tensorflow_serving out-of-box models..."
-python service_schedules.py --schedule_name=$SERVICE:$SCHEDULE
+#cd ../servers
+#echo "Deploying tensorflow_serving out-of-box models..."
+#python service_schedules.py --schedule_name=$SERVICE:$SCHEDULE

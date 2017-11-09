@@ -2,7 +2,8 @@
 set timeout 1000000
 set node [lindex $argv 0]
 set password [lindex $argv 1]
-set workshop_dir [lindex $argv 2]
+set dest_dir [lindex $argv 2]
+set name [lindex $argv 3]
 
 spawn ssh $node
 expect {
@@ -15,7 +16,7 @@ expect {
 }
 expect "]#"
 
-send "cd $workshop_dir\n"
+send "cd $dest_dir/$name\n"
 expect "]#"
 send "git checkout .; git pull origin master\n"
 expect {
