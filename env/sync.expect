@@ -1,0 +1,29 @@
+#!/usr/bin/expect
+set timeout 1000000
+set node [lindex $argv 0]
+set password [lindex $argv 1]
+set workshop_dir [lindex $argv 2]
+
+spawn ssh $node
+expect {
+    "yes/no" { 
+        send "yes\n" 
+        expect { "*password*" { send "$password\n" } }
+    }
+    "*password*" { send "$password\n" }
+    "]#" { send "ls\n" } 
+}
+expect "]#"
+
+send "cd $workshop_dir\n"
+expect "]#"
+send "git checkout .; git pull origin master\n"
+expect {
+    "Username" { 
+        send "lihangyu\n" 
+		expect "Password" 
+		send "Liaowei131\n"
+    }
+    "]#" { send "ls\n" }
+}
+expect "]#"
