@@ -1,0 +1,42 @@
+#!/usr/bin/expect
+set timeout 1000000
+set node [lindex $argv 0]
+set password [lindex $argv 1]
+set dest_dir [lindex $argv 2]
+set pip [lindex $argv 3]
+set tfpkg [lindex $argv 4]
+
+send "cd $dest_dir\n"
+expect "]#" 
+send "tar -xvf $pip\n"
+expect "]#"
+send "yum install python-devel\n"
+expect {
+    "y/d/N]" { 
+        send "y\n" 
+        expect "]#"
+        send "cd ./pip-9.0.1\n"
+    }
+
+    "y/N]" { 
+        send "y\n" 
+        expect "]#"
+        send "cd ./pip-9.0.1\n"
+    }
+    "]#" { send "cd ./pip-9.0.1\n" }
+}
+expect "]#"
+send "python setup.py build\n"
+expect "]#"
+send "python setup.py install\n"
+expect "]#"
+
+send "pip uninstall $tfpkg\n"
+expect {
+    "(y/n)*" { send "y\n" }
+    "]#" { send "ls\n" }
+    "not installed" { send "\n" }
+}
+expect "]#"
+send "pip install --force $tfpkg\n"
+expect  "]#" 

@@ -1,0 +1,47 @@
+#!/usr/bin/expect
+set timeout 1000000
+set node [lindex $argv 0]
+set password [lindex $argv 1]
+set dest_dir [lindex $argv 2]
+set cuda [lindex $argv 3]
+set cudnn [lindex $argv 4]
+
+spawn ssh $node
+expect {
+    "yes/no" { 
+        send "yes\n" 
+        expect { "*password*" { send "$password\n" } }
+    }
+    "*password*" { send "$password\n" }
+    "]#" { send "ls\n" } 
+}
+expect "]#"
+
+send "cd $dest_dir/online_package\n"
+expect "]#"
+send "tar -xvf $cudnn\n"
+expect "]#"
+send "rpm -ivh $cuda\n"
+expect "]#" 
+send "yum-complete-transaction\n"
+expect "]#"
+send "yum install cuda\n"
+expect {
+    "y/d/N]" { send "y\n" }
+    "y/N]" { send "y\n" }
+    "]#" { send "ls\n"}
+}
+expect {
+    "y/d/N]" { send "y\n" }
+    "y/N]" { send "y\n" }
+    "]#" { send "ls\n"}
+}
+expect {
+    "y/d/N]" { send "y\n" }
+    "y/N]" { send "y\n" }
+    "]#" { send "ls\n"}
+}
+send "/bin/cp -f cuda/include/* /usr/local/cuda/include/\n"
+expect "]#" 
+send "/bin/cp -f cuda/lib64/* /usr/local/cuda/lib64/\n"
+expect "]#"

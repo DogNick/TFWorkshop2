@@ -1,0 +1,39 @@
+#!/usr/bin/expect
+set timeout 1000000
+set node [lindex $argv 0]
+set password [lindex $argv 1]
+set dest_dir [lindex $argv 2]
+set pkg_dir [lindex $argv 3]
+
+spawn ssh $node
+expect {
+    "yes/no" { 
+        send "yes\n" 
+        expect { "*password*" { send "$password\n" } }
+    }
+    "*password*" { send "$password\n" }
+    "]#" { send "ls\n" } 
+}
+expect "]#"
+send "cd $dest_dir\n" 
+expect "]#"
+send "mkdir -p online_package\n" 
+expect "]#"
+spawn scp -r $pkg_dir $node:$dest_dir/online_package
+expect {
+    "yes/no" { 
+        send "yes\n" 
+        expect { "*password*" { send "$password\n" } }
+    }
+    "*password*" { send "$password\n" }
+}
+expect {
+	"]#" {
+		send "\n"
+		expect "]#"
+	}
+	"]$" {
+		send "\n"
+		expect "]$"
+	}
+}

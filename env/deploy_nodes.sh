@@ -29,4 +29,4 @@ done 10< nodes
 
 cd ../servers
 echo "Deploying tensorflow_serving out-of-box models..."
-python service_schedules.py --schedule_name=$1
+python service_schedules.py --schedule_name=$SERVICE:$SCHEDULE
