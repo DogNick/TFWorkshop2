@@ -7,10 +7,12 @@ import subprocess
 import signal
 
 gflags.DEFINE_string("schedule_name", None, "service:schedule")
+gflags.DEFINE_string("only_print_models", False, "just print out-of-box models related")
 gflags.MarkFlagAsRequired('schedule_name') 
 
 FLAGS = gflags.FLAGS
 
+## Currently no use
 ONLINE_ALL = [
 	"root@10.153.50.79:/search/odin/offline/Workshop", 
 	"root@10.153.50.80:/search/odin/offline/Workshop",
@@ -134,6 +136,10 @@ if __name__ == "__main__":
 	service_name, schedule_name = re.split(":", FLAGS.schedule_name)
 	schedule = SERVICE_SCHEDULES[service_name][schedule_name]
 		
+	if FLAGS.only_print_models:
+		model_names = [model_conf["model"] for model_conf in schedule["servables"]] 
+		print " ".join(model_names)
+		exit(0)
 	children = []	
 	for node_with_workshop_path in schedule["nodes"]:
 		for model_conf in schedule["servables"]:

@@ -6,11 +6,23 @@ set dest_dir [lindex $argv 2]
 set pip [lindex $argv 3]
 set tfpkg [lindex $argv 4]
 
+
+spawn ssh $node
+expect {
+    "yes/no" { 
+        send "yes\n" 
+        expect { "*password*" { send "$password\n" } }
+    }
+    "*password*" { send "$password\n" }
+    "]#" { send "ls\n" } 
+}
+expect "]#"
 send "cd $dest_dir\n"
 expect "]#" 
 send "tar -xvf $pip\n"
 expect "]#"
 send "yum install python-devel\n"
+####### the pip-9.0.1 name might be changed in the future ########
 expect {
     "y/d/N]" { 
         send "y\n" 
@@ -31,7 +43,8 @@ expect "]#"
 send "python setup.py install\n"
 expect "]#"
 
-send "pip uninstall $tfpkg\n"
+################ for tensorflow ###################
+send "cd $dest_dir; pip uninstall $tfpkg\n"
 expect {
     "(y/n)*" { send "y\n" }
     "]#" { send "ls\n" }

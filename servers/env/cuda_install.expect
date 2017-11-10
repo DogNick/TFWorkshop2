@@ -16,8 +16,7 @@ expect {
     "]#" { send "ls\n" } 
 }
 expect "]#"
-
-send "cd $dest_dir/online_package\n"
+send "cd $dest_dir\n"
 expect "]#"
 send "tar -xvf $cudnn\n"
 expect "]#"
@@ -40,6 +39,10 @@ expect {
     "y/d/N]" { send "y\n" }
     "y/N]" { send "y\n" }
     "]#" { send "ls\n"}
+}
+expect {
+	"]#" {}
+	"]$" {}
 }
 send "/bin/cp -f cuda/include/* /usr/local/cuda/include/\n"
 expect "]#" 

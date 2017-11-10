@@ -3,7 +3,6 @@ set timeout 1000000
 set node [lindex $argv 0]
 set password [lindex $argv 1]
 set dest_dir [lindex $argv 2]
-set pkg_dir [lindex $argv 3]
 
 spawn ssh $node
 expect {
@@ -15,25 +14,21 @@ expect {
     "]#" { send "ls\n" } 
 }
 expect "]#"
-send "cd $dest_dir\n" 
+
+send "mkdir -p $dest_dir; cd $dest_dir\n"
 expect "]#"
-send "mkdir -p online_package\n" 
-expect "]#"
-spawn scp -r $pkg_dir $node:$dest_dir/online_package
+send "git clone https://git.sogou-inc.com/intelligent-dialogue/TFWorkshop.git\n"
 expect {
-    "yes/no" { 
-        send "yes\n" 
-        expect { "*password*" { send "$password\n" } }
+    "Username" { 
+        send "duyi\n" 
+		expect "Password" 
+		send "Lvht7752092\n"
     }
-    "*password*" { send "$password\n" }
+    "]#" { send "ls\n" }
 }
+expect "]#"
+send "cd TFWorkshop\n"
 expect {
-	"]#" {
-		send "\n"
-		expect "]#"
-	}
-	"]$" {
-		send "\n"
-		expect "]$"
-	}
+	"]#" {}
+	"]$" {}
 }
